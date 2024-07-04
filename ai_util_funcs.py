@@ -148,9 +148,12 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
   plt.xlabel('Epoch')
   plt.legend(['Train', 'Val'], loc='upper right')
   plt.show()
-  print("Evaluate on test data")
   results = model.evaluate(X_test, Y_test)
-  print("test loss, test acc:", results)
+  results_keys=[loss,*metrics]
+  results_dict={}
+  for i in range(len(results_keys)):
+   results_dict[results_keys[i]]=results[i]
+  print(f"evaluation results are {results_dict}")                    
   return hist
 
 # Get the correlation between different features
