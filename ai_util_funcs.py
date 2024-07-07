@@ -181,11 +181,15 @@ def cnn_model_builder(conv_layer,kernel_size,conv_factor,pool_layer,pool_size,in
  # by same padding, we mean zero padding that is evenly done and with stride of one keeps the output dimention the same
  cnn_model=Sequential()
 
- for filter_size in filter_sizes:
-  for i in range(conv_factor):
-   cnn_model.add(conv_layer(filters=filter_size, kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
-                     input_shape=input_shape[1:3]))
-  cnn_model.add(pool_layer(pool_size=pool_size))
+ for i in range(len(filter_sizes)):
+   for j in range(conv_factor):
+    if i==0:
+     cnn_model.add(conv_layer(filters=filter_size[i], kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
+                     input_shape=input_shape))
+    else:
+     cnn_model.add(conv_layer(filters=filter_size[i], kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
+                     input_shape=input_shape))
+   cnn_model.add(pool_layer(pool_size=pool_size))
 
  cnn_model.add(layers.Flatten())
  cnn_model.add(layers.BatchNormalization())
