@@ -184,10 +184,10 @@ def cnn_model_builder(conv_layer,kernel_size,conv_factor,pool_layer,pool_size,in
  for i in range(len(filter_sizes)):
    for j in range(conv_factor):
     if i==0:
-     cnn_model.add(conv_layer(filters=filter_size[i], kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
+     cnn_model.add(conv_layer(filters=filter_sizes[i], kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
                      input_shape=input_shape))
     else:
-     cnn_model.add(conv_layer(filters=filter_size[i], kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
+     cnn_model.add(conv_layer(filters=filter_sizes[i], kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
                      input_shape=input_shape))
    cnn_model.add(pool_layer(pool_size=pool_size))
 
