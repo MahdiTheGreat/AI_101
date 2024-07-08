@@ -139,6 +139,7 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
                              loss="mse",metrics=['mse', 'mae', 'mape'],callbacks=[EarlyStopping(monitor='loss',patience=5)]):
   # in addition to detemining the degree of which the model overfits to a certain data, batch size also determines how quickly the cost function stabalizes
   # which is not always a good thing, as that could signal the model has high bias
+  # note: this function is mainly for small datasets, as bigger datasets need a data loader
   model.compile(optimizer=optimizer, loss=loss,metrics=metrics)
   hist = model.fit(x=X_train, y=Y_train, batch_size=batch_size, validation_data=(X_val, Y_val),epochs=epochs,verbose=1,callbacks=callbacks)
   plt.plot(hist.history[loss])
