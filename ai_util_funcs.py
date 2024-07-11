@@ -116,30 +116,18 @@ def sequential_unit_model_builder(network_type,input_shape,layer_sizes,last_laye
 
 
  network.append(layer_func(units=layer_sizes[-1], activation=last_layer_activation, **kwargs))
-
- if dropout_rate>0:
-  network_with_droput=[]
-  for i in range(len(network) - 1):
-    network_with_droput.append(network[i])
-    network_with_droput.append(layers.Dropout(rate=dropout_rate))
-  network_with_droput.append(network[-1])
-  network=network_with_droput
-
- return Sequential(network)
-
-import matplotlib.pyplot as plt
-def regression_accuracy_scatter_plot(Y_test, pred):
-  plt.scatter(Y_test, pred)
   plt.xlabel("Actual Values")
   plt.ylabel("Predicted Values")
   plt.show()
 
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_val,X_test, Y_test,batch_size=8,epochs=20,
                              loss="mse",metrics=['mse', 'mae', 'mape'],callbacks=[EarlyStopping(monitor='loss',patience=5)]):
   # in addition to detemining the degree of which the model overfits to a certain data, batch size also determines how quickly the cost function stabalizes
   # which is not always a good thing, as that could signal the model has high bias
   # note: this function is mainly for small datasets, as bigger datasets need a data loader
+  # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,save_weights_only=True,verbose=1)
+  
   model.compile(optimizer=optimizer, loss=loss,metrics=metrics)
   hist = model.fit(x=X_train, y=Y_train, batch_size=batch_size, validation_data=(X_val, Y_val),epochs=epochs,verbose=1,callbacks=callbacks)
   plt.plot(hist.history[loss])
