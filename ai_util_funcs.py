@@ -132,10 +132,14 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
 							  save_weights_only=True,      # Save only the model weights
 							  verbose=1                    # Verbosity mode
 							  )]):
+  
+  # note: this function is mainly for small datasets, as bigger datasets need a data loader
+  
+  # Loss is typically preferred for its sensitivity and ability to reflect small changes in model learning, especially in imbalanced or regression tasks
+  # Accuracy is more intuitive and can be more directly related to model performance in balanced classification tasks
+								  
   # in addition to detemining the degree of which the model overfits to a certain data, batch size also determines how quickly the cost function stabalizes
   # which is not always a good thing, as that could signal the model has high bias
-  # note: this function is mainly for small datasets, as bigger datasets need a data loader
-  # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,save_weights_only=True,verbose=1)
   
   model.compile(optimizer=optimizer, loss=loss,metrics=metrics)
   hist = model.fit(x=X_train, y=Y_train, batch_size=batch_size, validation_data=(X_val, Y_val),epochs=epochs,verbose=1,callbacks=callbacks)
