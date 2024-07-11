@@ -122,7 +122,16 @@ def sequential_unit_model_builder(network_type,input_shape,layer_sizes,last_laye
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_val,X_test, Y_test,batch_size=8,epochs=20,
-                             loss="mse",metrics=['mse', 'mae', 'mape'],callbacks=[EarlyStopping(monitor='loss',patience=5)]):
+                             loss="mse",metrics=['mse', 'mae', 'mape'],callbacks=[
+                              EarlyStopping(monitor='loss',patience=5),
+                              ModelCheckpoint(
+							  'best_model_weights.h5', 
+							  monitor='val_loss',     
+							  save_best_only=True,         
+							  mode='min',                  # Mode to compare the monitored metric ('min' for minimum, 'max' for maximum)
+							  save_weights_only=True,      # Save only the model weights
+							  verbose=1                    # Verbosity mode
+							  )]):
   # in addition to detemining the degree of which the model overfits to a certain data, batch size also determines how quickly the cost function stabalizes
   # which is not always a good thing, as that could signal the model has high bias
   # note: this function is mainly for small datasets, as bigger datasets need a data loader
