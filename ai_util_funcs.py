@@ -79,7 +79,7 @@ def dense_arch_builder(input_size,scale_power=0,hidden_layers_num=0,repeat=0,out
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
-def sequential_unit_model_builder(network_type,input_shape,layer_sizes,last_layer_activation,dropout_rate=0,time_steps=0,
+def sequential_unit_model_builder(name,network_type,input_shape,layer_sizes,last_layer_activation,dropout_rate=0,time_steps=0,
                                   activation=None,**kwargs):
  # if the network_type is lstm, do we even need layer_sizes or is every layer the same?
  # the reason default value of dropout_rate is zero is because dropout could actually harm the performance of the neural network, specially on val dataset
@@ -94,8 +94,6 @@ def sequential_unit_model_builder(network_type,input_shape,layer_sizes,last_laye
   type_activation_map[network_type]=activation
   if activation not in activation_kernel_initializer_map.keys():
     activation_kernel_initializer_map[activation]='he_normal'
-
-
 
  if network_type=='lstm':
   # here the input_shape is the number of features
@@ -113,12 +111,20 @@ def sequential_unit_model_builder(network_type,input_shape,layer_sizes,last_laye
 
  if 'return_sequences' in kwargs:
   kwargs['return_sequences'] = False
-
-
+   
  network.append(layer_func(units=layer_sizes[-1], activation=last_layer_activation, **kwargs))
-  plt.xlabel("Actual Values")
-  plt.ylabel("Predicted Values")
-  plt.show()
+
+ if dropout_rate>0:
+  network_with_droput=[]
+  for i in range(len(network) - 1):
+    network_with_droput.append(network[i])
+    network_with_droput.append(layers.Dropout(rate=dropout_rate))
+  network_with_droput.append(network[-1])
+  network=network_with_droput
+
+ return Sequential(network,name=name)
+
+
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_val,X_test, Y_test,batch_size=8,epochs=20,
@@ -177,11 +183,11 @@ def correlation_heatmap(df):
 
     plt.title('Pearson Correlation of Features', y=1.05, size=15)
 
-def cnn_model_builder(conv_layer,kernel_size,conv_factor,pool_layer,pool_size,input_shape,filter_sizes, activation='relu',
+def cnn_model_builder(name,conv_layer,kernel_size,conv_factor,pool_layer,pool_size,input_shape,filter_sizes, activation='relu',
  kernel_initializer='he_uniform',padding='same',**kwargs):
 
  # by same padding, we mean zero padding that is evenly done and with stride of one keeps the output dimention the same
- cnn_model=Sequential()
+ cnn_model=Sequential(name=name)
 
  for i in range(len(filter_sizes)):
    for j in range(conv_factor):
