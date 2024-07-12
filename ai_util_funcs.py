@@ -205,3 +205,41 @@ def sequential_model_combiner(models):
   for layer in model.layers:
       combined_model.add(layer)
  return combined_model
+
+import math
+def data_visualizer(df, heatmap=False, displot_kind=None):
+  # we assume x and y are either in numpy or pandas dataframe format
+
+  if not isinstance(df, pd.DataFrame):df=pd.DataFrame(df)
+
+  print('data info:')
+  print(df)
+  print(df.info())
+  print(df.describe())
+  print(df.isna().sum())
+
+  if heatmap:
+   correlation_heatmap(df)
+
+  if displot_kind is not None:
+  #  df.hist(bins=50, figsize=(20,15))
+  #  plt.show()
+   num_columns = int(math.sqrt(len(df.columns)))  # Define the number of columns for the grid
+   num_rows = len(df.columns) // num_columns + (len(df.columns) % num_columns > 0)  # Calculate the number of rows needed
+ 
+   fig, axes = plt.subplots(num_rows, num_columns, figsize=(15, 10))
+ 
+   # Flatten the axes array for easy iteration
+   axes = axes.flatten()
+ 
+   # Plotting each attribute in the grid
+   for i, column in enumerate(df.columns):
+       sns.histplot(df[column], kde=displot_kind, ax=axes[i])
+       axes[i].set_title(column)
+ 
+   # Remove any unused subplots
+   for j in range(i + 1, len(axes)):
+       fig.delaxes(axes[j])
+ 
+   plt.tight_layout()
+   plt.show()
