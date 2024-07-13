@@ -137,7 +137,7 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
 								  
   # in addition to detemining the degree of which the model overfits to a certain data, batch size also determines how quickly the cost function stabalizes
   # which is not always a good thing, as that could signal the model has high bias
-  export_path='/'+name+'/'
+  export_path='/'+model.name+'/'
   if not os.path.exists(export_path):
     os.makedirs(export_path)
 
