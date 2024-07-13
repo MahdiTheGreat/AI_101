@@ -128,16 +128,7 @@ def sequential_unit_model_builder(name,network_type,input_shape,layer_sizes,last
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_val,X_test, Y_test,batch_size=8,epochs=20,
-                             loss="mse",metrics=['mse', 'mae', 'mape'],callbacks=[
-                              EarlyStopping(monitor='loss',patience=5),
-                              ModelCheckpoint(
-							  'best_model_weights.h5', 
-							  monitor='val_loss',     
-							  save_best_only=True,         
-							  mode='min',                  # Mode to compare the monitored metric ('min' for minimum, 'max' for maximum)
-							  save_weights_only=True,      # Save only the model weights
-							  verbose=1                    # Verbosity mode
-							  )]):
+                             loss="mse",metrics=['mse', 'mae', 'mape'],format='keras',callbacks=None):
   
   # note: this function is mainly for small datasets, as bigger datasets need a data loader
   
@@ -146,7 +137,14 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
 								  
   # in addition to detemining the degree of which the model overfits to a certain data, batch size also determines how quickly the cost function stabalizes
   # which is not always a good thing, as that could signal the model has high bias
-  
+  export_path='/'+name+'/'
+  if not os.path.exists(export_path):
+    os.makedirs(export_path)
+
+  if callbacks is None:
+    callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5),
+               tf.keras.callbacks.ModelCheckpoint(filepath=export_path+name+'.'+format, monitor='val_loss', save_best_only=True)]
+
   model.compile(optimizer=optimizer, loss=loss,metrics=metrics)
   hist = model.fit(x=X_train, y=Y_train, batch_size=batch_size, validation_data=(X_val, Y_val),epochs=epochs,verbose=1,callbacks=callbacks)
   plt.plot(hist.history[loss])
@@ -156,13 +154,14 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
   plt.xlabel('Epoch')
   plt.legend(['Train', 'Val'], loc='upper right')
   plt.show()
+  plt.savefig(export_path+'Model_Loss.png')
   results = model.evaluate(X_test, Y_test)
   results_keys=[loss,*metrics]
   results_dict={}
   for i in range(len(results_keys)):
    results_dict[results_keys[i]]=results[i]
   print(f"evaluation results are {results_dict}")                    
-  return hist
+  return hist,results_dict
 
 # Get the correlation between different features
 import seaborn as sns
