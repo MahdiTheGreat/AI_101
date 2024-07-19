@@ -166,7 +166,7 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
 
   if callbacks is None:
     callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5),
-               tf.keras.callbacks.ModelCheckpoint(filepath=export_path+name+'.'+format, monitor='val_loss', save_best_only=True)]
+               tf.keras.callbacks.ModelCheckpoint(filepath=export_path+model.name+'.'+format, monitor='val_loss', save_best_only=True)]
 
   model.compile(optimizer=optimizer, loss=loss,metrics=metrics)
   hist = model.fit(x=X_train, y=Y_train, batch_size=batch_size, validation_data=(X_val, Y_val),epochs=epochs,verbose=1,callbacks=callbacks)
