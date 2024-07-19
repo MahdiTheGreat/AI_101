@@ -1,3 +1,26 @@
+import stat
+import os
+def python_mkdir(parent_dir,new_dir,exist_ok=False):
+ st = os.stat(parent_dir)
+ original_permissions = stat.S_IMODE(st.st_mode)
+ try:
+  if exist_ok:
+        os.makedirs(new_dir, exist_ok=True)
+  elif not os.path.exists(new_dir):
+    os.makedirs(new_dir)
+  else:
+    i=0
+    while os.path.exists(new_dir+str(i)):
+      i+=1
+      new_dir=new_dir+str(i)
+    os.makedirs(new_dir)
+ except OSError as e:
+   print(f"Error: {e}")
+ finally:
+     os.chmod(parent_dir, original_permissions)  # Revert to original permissions
+     print(f"Permissions reverted to {oct(original_permissions)} for {parent_dir}")
+ return new_dir  
+ 
 def train_test_split_with_indices(X, y, test_size,dtype):
  # usefull when using sklearn.model_selection like the example below
 
