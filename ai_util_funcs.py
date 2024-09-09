@@ -188,6 +188,7 @@ def sequential_model_trainer_evaluator(model,optimizer,X_train,Y_train,X_val,Y_v
 
 # Get the correlation between different features
 import seaborn as sns
+import matplotlib.pyplot as plt
 def correlation_heatmap(df):
     _ , ax = plt.subplots(figsize =(14, 12))
     colormap = sns.diverging_palette(220, 10, as_cmap = True)
