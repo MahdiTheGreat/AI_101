@@ -237,7 +237,6 @@ def sequential_model_combiner(models):
 
 import math
 def data_visualizer(df, heatmap=False, displot_kind=None):
-  # we assume x and y are either in numpy or pandas dataframe format
 
   if not isinstance(df, pd.DataFrame):df=pd.DataFrame(df)
 
