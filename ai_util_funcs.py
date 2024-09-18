@@ -206,6 +206,67 @@ def correlation_heatmap(df):
 
     plt.title('Pearson Correlation of Features', y=1.05, size=15)
 
+from IPython.display import display
+import math
+import seaborn as sns
+def data_visualizer(df,max_columns=60,max_rows = 20, display_func=display, histogram=True, heatmap=False):
+
+  if not isinstance(df, pd.DataFrame):df=pd.DataFrame(df)
+  pd.set_option('display.max_columns',max_columns)
+  pd.set_option('display.max_rows', max_rows)
+  break_line="------------------------------------------------"
+  print('data sample:')
+  display_func(df)
+  print(break_line)
+  pd.set_option('display.max_columns', None)
+  pd.set_option('display.max_rows', None)
+  print('data info:')
+  display_func(df.info())
+  print(break_line)
+  # Check the general structure of the dataset
+  print('data description:')
+  display_func(df.describe())
+  print(break_line)
+  print('data nan check:')
+  display_func(df.isna().sum())
+  pd.set_option('display.max_columns',max_columns)
+  pd.set_option('display.max_rows', max_rows)
+  
+  if heatmap:
+   correlation_heatmap(df)
+
+  if histogram is not None:
+  #  df.hist(bins=50, figsize=(20,15))
+  #  plt.show()
+
+   # Select numeric columns (integer and float types)
+   numeric_columns = df.select_dtypes(include=['number']).columns
+
+   # Calculate the square root of the number of plots to find the closest square layout
+
+   cols = int(math.sqrt(len(numeric_columns)))  # Define the number of columns for the grid
+   rows = len(numeric_columns) // cols + (len(numeric_columns) % cols > 0)  # Calculate the number of rows needed
+
+
+   fig, axes = plt.subplots(rows, cols, figsize=(15, 10))
+
+   # Flatten the axes array for easy iteration
+   axes = axes.flatten()
+
+   # Plotting each attribute in the grid
+   for i, column in enumerate(numeric_columns):
+        sns.histplot(df[column], kde=True, ax=axes[i])
+        axes[i].set_title(column)
+
+   # Remove any unused subplots
+   for j in range(i + 1, len(axes)):
+       fig.delaxes(axes[j])
+
+   axes.reshape(rows, cols)
+
+   plt.tight_layout()
+   plt.show()
+
 def cnn_model_builder(name,conv_layer,kernel_size,conv_factor,pool_layer,pool_size,input_shape,filter_sizes, activation='relu',
  kernel_initializer='he_uniform',padding='same',**kwargs):
 
@@ -234,40 +295,3 @@ def sequential_model_combiner(models):
   for layer in model.layers:
       combined_model.add(layer)
  return combined_model
-
-import math
-def data_visualizer(df, heatmap=False, displot_kind=None):
-
-  if not isinstance(df, pd.DataFrame):df=pd.DataFrame(df)
-
-  print('data info:')
-  print(df)
-  print(df.info())
-  print(df.describe())
-  print(df.isna().sum())
-
-  if heatmap:
-   correlation_heatmap(df)
-
-  if displot_kind is not None:
-  #  df.hist(bins=50, figsize=(20,15))
-  #  plt.show()
-   num_columns = int(math.sqrt(len(df.columns)))  # Define the number of columns for the grid
-   num_rows = len(df.columns) // num_columns + (len(df.columns) % num_columns > 0)  # Calculate the number of rows needed
- 
-   fig, axes = plt.subplots(num_rows, num_columns, figsize=(15, 10))
- 
-   # Flatten the axes array for easy iteration
-   axes = axes.flatten()
- 
-   # Plotting each attribute in the grid
-   for i, column in enumerate(df.columns):
-       sns.histplot(df[column], kde=displot_kind, ax=axes[i])
-       axes[i].set_title(column)
- 
-   # Remove any unused subplots
-   for j in range(i + 1, len(axes)):
-       fig.delaxes(axes[j])
- 
-   plt.tight_layout()
-   plt.show()
