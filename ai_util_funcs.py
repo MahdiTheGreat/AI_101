@@ -268,7 +268,7 @@ def data_visualizer(df,max_columns=60,max_rows = 20, display_func=display, histo
    plt.show()
 
 def cnn_model_builder(name,conv_layer,kernel_size,conv_factor,pool_layer,pool_size,input_shape,filter_sizes, activation='relu',
- kernel_initializer='he_uniform',padding='same',**kwargs):
+ kernel_initializer='he_uniform',padding='same',flatten=True,**kwargs):
 
  # by same padding, we mean zero padding that is evenly done and with stride of one keeps the output dimention the same
  cnn_model=Sequential(name=name)
@@ -283,8 +283,10 @@ def cnn_model_builder(name,conv_layer,kernel_size,conv_factor,pool_layer,pool_si
                      input_shape=input_shape))
    cnn_model.add(pool_layer(pool_size=pool_size))
 
- cnn_model.add(layers.Flatten())
- cnn_model.add(layers.BatchNormalization())
+ if flatten:
+  cnn_model.add(layers.Flatten())
+  cnn_model.add(layers.BatchNormalization())
+  
  return cnn_model
 
 def sequential_model_combiner(models):
