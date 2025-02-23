@@ -275,7 +275,7 @@ def cnn_model_builder(name,conv_layer,kernel_size,conv_factor,pool_layer,pool_si
 
  for i in range(len(filter_sizes)):
    for j in range(conv_factor):
-    if i==0:
+    if i==0 and j==0:
      cnn_model.add(conv_layer(filters=filter_sizes[i], kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation,
                      input_shape=input_shape))
     else:
